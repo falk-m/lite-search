@@ -191,16 +191,19 @@ class DocumentIndex
 
     public function getDocumentUuidsByTerms(array $terms, array $where = [], array $orderBy = [], int $totalLimit = 1000, int|bool $fuzzy = false)
     {
-        $criteriaId = "";
-
-        if ($fuzzy) {
+        $criteriaField = "";
+        if (empty($terms)) {
+            $criteriaField = "1";
+        } elseif ($fuzzy) {
             $fuzzyDistance = is_bool($fuzzy) ? 2 : $fuzzy;
             $criteriaId = $this->registerCriteriaFunction($this->getFuzzyStandardSerachCritera($terms, $fuzzyDistance));
+            $criteriaField = "document_criteria('{$criteriaId}', terms)";
         } else {
             $criteriaId = $this->registerCriteriaFunction($this->getStandardSerachCritera($terms));
+            $criteriaField = "document_criteria('{$criteriaId}', terms)";
         }
 
-        $sql = "SELECT uuid, document_criteria('{$criteriaId}', terms) AS score 
+        $sql = "SELECT uuid, {$criteriaField} AS score 
                 FROM docs";
 
         $where[] = "score > 0";
