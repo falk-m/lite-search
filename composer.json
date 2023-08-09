@@ -1,0 +1,27 @@
+{
+  "name": "falk-m/lite-search",
+  "type": "library",
+  "description": "A text search engine written in PHP",
+  "keywords": [
+      "search",
+      "fulltext",
+      "stemming",
+      "fuzzy search"
+  ],
+  "homepage": "https://falk-m.de",
+  "license": "MIT",
+  "authors": [{
+      "name": "Falk Mueller",
+      "email": "git@falk-m.de",
+      "homepage": "https://falk-m.de",
+      "role": "Developer"
+  }],
+  "require": {
+    "php": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "falkm\\search\\": "src/"
+    }
+  }
+}
