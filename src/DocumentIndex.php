@@ -160,7 +160,7 @@ class DocumentIndex
     private function getFuzzyStandardSerachCritera(array $terms, int $maxDistance)
     {
         $searchTerms = array_map(function ($term) {
-            return ["prefix" => substr($term, 0, $this->fuzzySearchPrefixLengh), "term" => $term];
+            return ["prefix" => substr($term, 0, $this->fuzzySearchPrefixLengh), "term" => $term, "length" => strlen($term)];
         }, $terms);
 
         return function (string $value) use ($searchTerms, $maxDistance) {
@@ -173,8 +173,8 @@ class DocumentIndex
                         continue;
                     }
 
+                    $distance = levenshtein(substr($docTerm, 0, $searchTerm["length"]), $searchTerm["term"]);
 
-                    $distance = levenshtein($docTerm, $searchTerm["term"]);
                     if ($distance > $maxDistance) {
                         continue;
                     }
