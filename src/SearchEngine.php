@@ -69,6 +69,11 @@ class SearchEngine
         return  $terms;
     }
 
+    public function registerCriteria(callable $criteria)
+    {
+        return $this->documentIndex->registerCriteriaFunction($criteria);
+    }
+
     public function search(string $query, int|bool $fuzzy = false, int $totalLimit = 1000, array $where = [], array $orderBy = [])
     {
         $terms = $this->getTerms($query);

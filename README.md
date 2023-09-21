@@ -206,9 +206,61 @@ print_r($result);
 
 **where:** you can add additional conditionals to the serach. in the example we filter by the additional data column 'topic'.
 
+## Tips
+
+### Filter by Tags
+
+1. create the index with a custom 'tags' field
+
+```php
+...
+    SearchEngine::OPTION_ADDITIONAL_COLUMNS => [
+        "tags" => "tags NULL"
+    ]];
+...
+```
+
+2. add tags ad string to indexed documents
+
+```php
+$tags = ['new', 'favorite'];
+
+$searchEngine->addDocument("DOC2", "This is a ohter text", [
+    "tags" => '|'.implode('|', $tags).'|'
+]);
+```
+
+3. search with tags
+
+- register a callable function via 'registerCriteria'
+- add critera to where clause
+  - document_criteria(criteriaId, index_column)
+
+```php
+
+$tags = ['new'];
+$criteriaId = $this->searchEngine->registerCriteria(function ($value) use ($tags) {
+        foreach ($tags as $tag) {
+            if (str_contains($value, "|{$tag}|")) {
+                return true;
+            }
+        }
+        return false;
+    });
+}
+
+$where = [
+    "document_criteria('{$criteriaId}', tags)"
+];
+
+$query = "";
+$result = $searchEngine->search($query,where: $where);
+```
+
+
 ## Version
 
-### 1.0.1 (21.09.2023)
+### 1.1.0 (21.09.2023)
 
-Seperate Terms filter from Text filter.
-So you can execute filter on the hole text input before tokenization and filter on each term in particular.
+- Seperate Terms filter from Text filter. So you can execute filter on the hole text input before tokenization and filter on each term in particular.
+- add function to apply custom filter criteria
