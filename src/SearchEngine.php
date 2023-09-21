@@ -10,14 +10,17 @@ class SearchEngine
 {
     public const OPTION_TOKENIZER = "OPTION_TOKENIZER";
     public const OPTION_STOPWORDS = "OPTION_STOPWORDS";
-    public const OPTION_FILTERS = "OPTION_FILTERS";
+    public const OPTION_TEXT_FILTERS = "OPTION_TEXT_FILTERS";
+    public const OPTION_TERM_FILTERS = "OPTION_TERM_FILTERS";
     public const OPTION_ADDITIONAL_COLUMNS = "OPTION_ADDITIONAL_COLUMNS";
 
 
     private DocumentIndex $documentIndex;
     private Tokenizer $tokenizer;
     /** @var Filter[] */
-    private array $filter;
+    private array $termfilter;
+    /** @var Filter[] */
+    private array $textFilter;
     /** @var string[] */
     private array $stopWords;
 
@@ -28,7 +31,8 @@ class SearchEngine
 
         $this->tokenizer = $options[self::OPTION_TOKENIZER] ?? new StandardTokenizer();
         $this->stopWords = $options[self::OPTION_STOPWORDS] ?? [];
-        $this->filter = $options[self::OPTION_FILTERS] ?? [];
+        $this->termfilter = $options[self::OPTION_TERM_FILTERS] ?? [];
+        $this->textFilter = $options[self::OPTION_TEXT_FILTERS] ?? [];
     }
 
     public function addDocument(string $uuid, string $text, array $additionalRows = [])
@@ -46,10 +50,15 @@ class SearchEngine
     public function getTerms($text)
     {
         $terms = [];
+
+        foreach ($this->textFilter as $filter) {
+            $text = $filter->filter($text);
+        }
+
         $tokens = $this->tokenizer->tokenize($text, $this->stopWords);
         foreach ($tokens as $term) {
-            foreach ($this->filter as $filer) {
-                $term = $filer->filter($term);
+            foreach ($this->termfilter as $filter) {
+                $term = $filter->filter($term);
             }
 
             if (!empty($term)) {

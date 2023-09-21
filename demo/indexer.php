@@ -15,9 +15,11 @@ $start = time();
 $indexFile = __DIR__ . '/store/docs.sqlite';
 $options = [
     SearchEngine::OPTION_STOPWORDS =>  StopWords::getByLanguage("german"),
-    SearchEngine::OPTION_FILTERS => [
-        new GermanStemmer(),
+    SearchEngine::OPTION_TEXT_FILTERS => [
         new HtmlFilter()
+    ],
+    SearchEngine::OPTION_TERM_FILTERS => [
+        new GermanStemmer()
     ],
     SearchEngine::OPTION_ADDITIONAL_COLUMNS => [
         "date" => "INTEGER NULL",

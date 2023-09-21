@@ -63,9 +63,11 @@ $indexFile = "./index.sqlite";
 $options = [  
     SearchEngine::OPTION_TOKENIZER => new falkm\search\tokenizer\StandardTokenizer();
     SearchEngine::OPTION_STOPWORDS =>  StopWords::getByLanguage("german"),
-    SearchEngine::OPTION_FILTERS => [
-        new falkm\search\stemmer\GermanStemmer(),
+    SearchEngine::OPTION_TEXT_FILTERS => [
         new falkm\search\filter\HtmlFilter()
+    ],
+    SearchEngine::OPTION_TERM_FILTERS => [
+        new falkm\search\stemmer\GermanStemmer()
     ],
     SearchEngine::OPTION_ADDITIONAL_COLUMNS => [
         "date" => "INTEGER NULL",
@@ -81,7 +83,8 @@ key | default | discrition
 -- | -- | --
 OPTION_TOKENIZER | StandardTokenizer | must implemensts the interface ```falkm\search\tokenizer\Tokenicer```. THe toknizer spit the text in token, e.g. words
 OPTION_STOPWORDS | [] | a array of words. for examples often used words lite "and", "are", ... A facory provides a list of typicly stopwords by the language 'german'. ```StopWords::getByLanguage("german")```
-OPTION_FILTERS | [] | A array of filter to transform the terms. Must be implement the interface ```falkm\search\filter\Filter```
+OPTION_TEXT_FILTERS | [] | A array of filter to transform the text. Must be implement the interface ```falkm\search\filter\Filter```
+OPTION_TERM_FILTERS | [] | A array of filter to transform the terms. Must be implement the interface ```falkm\search\filter\Filter```
 OPTION_ADDITIONAL_COLUMNS | [] | Array of additional culums for data filtering. the key is the name of the column and the value must be the sqlite datatype (Integer, Text, ...)
 
 
@@ -202,3 +205,10 @@ print_r($result);
 **order by:** the default value is ```["score DESC"]```. the score is the comuted value addicted by the search query. You can also use your additional columsn to sort the result
 
 **where:** you can add additional conditionals to the serach. in the example we filter by the additional data column 'topic'.
+
+## Version
+
+### 1.0.1 (21.09.2023)
+
+Seperate Terms filter from Text filter.
+So you can execute filter on the hole text input before tokenization and filter on each term in particular.

@@ -1,6 +1,7 @@
 {
   "name": "falk-m/lite-search",
   "type": "library",
+	"version": "1.1.0",
   "description": "A text search engine written in PHP",
   "keywords": [
       "search",
